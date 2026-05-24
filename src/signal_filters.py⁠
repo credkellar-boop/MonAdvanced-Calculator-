@@ -1,0 +1,56 @@
+import numpy as np
+import mmh3 # Fast non-cryptographic hash function
+import math
+
+class InfiniteSignalFilter:
+    def __init__(self, expected_items: int, false_positive_rate: float = 0.0000001):
+        """
+        Initializes a hyper-scale Bloom Filter. 
+        Calculates the exact array size and number of hash functions needed.
+        """
+        # Optimal array size (m)
+        self.size = int(-(expected_items * math.log(false_positive_rate)) / (math.log(2)**2))
+        
+        # Optimal number of hash functions (k)
+        self.hash_count = int((self.size / expected_items) * math.log(2))
+        
+        # The bit array
+        self.bit_array = bytearray(math.ceil(self.size / 8))
+
+    def _set_bit(self, index: int):
+        byte_index = index // 8
+        bit_index = index % 8
+        self.bit_array[byte_index] |= (1 << bit_index)
+
+    def _get_bit(self, index: int) -> bool:
+        byte_index = index // 8
+        bit_index = index % 8
+        return (self.bit_array[byte_index] & (1 << bit_index)) != 0
+
+    def add_malicious_signature(self, signature: str):
+        """Hashes an incoming threat signature and adds it to the blockade."""
+        for i in range(self.hash_count):
+            index = mmh3.hash(signature, i) % self.size
+            self._set_bit(index)
+
+    def is_fraudulent(self, signature: str) -> bool:
+        """
+        Checks if a signal is malicious in O(1) time. 
+        If False, the signal is 100% clean. If True, it is highly likely fraudulent.
+        """
+        for i in range(self.hash_count):
+            index = mmh3.hash(signature, i) % self.size
+            if not self._get_bit(index):
+                return False
+        return True
+
+class WaveMechanics:
+    @staticmethod
+    def extract_frequencies(time_series_data: list) -> np.ndarray:
+        """
+        Uses Fast Fourier Transform (FFT) to instantly decompose raw chaotic data
+        into distinct, trackable frequencies to identify coordinated anomaly spikes.
+        """
+        signal_array = np.array(time_series_data)
+        frequencies = np.fft.fft(signal_array)
+        return np.abs(frequencies)
