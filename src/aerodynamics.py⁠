@@ -1,0 +1,21 @@
+class AerodynamicsEngine:
+    def __init__(self):
+        pass
+
+    def calculate_drag(self, air_density: float, velocity: float, drag_coefficient: float, area: float) -> float:
+        """
+        Calculates aerodynamic drag force.
+        """
+        return 0.5 * air_density * (velocity ** 2) * drag_coefficient * area
+
+    def calculate_lift(self, air_density: float, velocity: float, lift_coefficient: float, area: float) -> float:
+        """
+        Calculates aerodynamic lift force.
+        """
+        return 0.5 * air_density * (velocity ** 2) * lift_coefficient * area
+
+    def mach_number(self, velocity: float, local_speed_of_sound: float) -> float:
+        """
+        Calculates the Mach number for a given velocity.
+        """
+        return velocity / local_speed_of_sound
