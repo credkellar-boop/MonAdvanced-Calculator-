@@ -1,0 +1,28 @@
+import math
+import scipy.constants as const
+
+class LaserEngine:
+    def __init__(self):
+        self.h = const.h # Planck's constant
+        self.c = const.c # Speed of light
+
+    def photon_energy(self, wavelength_meters: float) -> float:
+        """Calculates the energy of a single photon in Joules."""
+        return (self.h * self.c) / wavelength_meters
+
+    def beam_divergence(self, wavelength_meters: float, aperture_diameter: float) -> float:
+        """
+        Calculates the half-angle beam divergence in radians. 
+        Critical for targeting objects in deep space.
+        """
+        return 1.22 * (wavelength_meters / aperture_diameter)
+
+    def radiation_pressure(self, laser_power_watts: float, beam_area_sq_meters: float, reflective: bool = False) -> float:
+        """
+        Calculates the physical push (pressure in Pascals) exerted by a laser.
+        Reflective surfaces double the pressure.
+        """
+        intensity = laser_power_watts / beam_area_sq_meters
+        if reflective:
+            return (2 * intensity) / self.c
+        return intensity / self.c
