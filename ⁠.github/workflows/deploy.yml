@@ -1,0 +1,39 @@
+name: Sovereign Compilation Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 1 * *' # Runs at the start of every month
+
+jobs:
+  build-and-seal:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Execute Black Folder Compiler
+        run: |
+          python src/black_folder_compiler.py
+
+      - name: Verify Cryptographic Integrity
+        run: |
+          # The script exits with non-zero code if hash mismatch is detected
+          python scripts/verify_signatures.py
+          
+      - name: Deploy to Sovereign Node
+        if: success()
+        run: |
+          echo "Architecture compiled and sealed. Deploying to Monad-HFT-Node."
